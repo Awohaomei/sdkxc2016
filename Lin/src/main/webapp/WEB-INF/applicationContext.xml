@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="com.isoft.service.impl,com.isoft.dao.impl"/>
+    <context:annotation-config></context:annotation-config>
+
+<!--mybatis整合-->
+    <!--加载jdbcConfig中的配置文件(property中的变量)-->
+    <context:property-placeholder location="classpath*:jdbcConfig.properties"/>
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jbdc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <!--mysql8.0版本：<property name="url" value="jdbc:mysql://localhost:3306/l1db?serverTimezone=UTC"/>-->
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--创建sqlSessionFactoryBean对象-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="sessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource"  ref="dataSource"/>
+        <property name="mapperLocations" value="classpath*:**/*Mapper.xml"/>
+    </bean>
+
+</beans>
